@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"server/model"
 
 	"github.com/gorilla/websocket"
@@ -27,12 +28,13 @@ var WinningCombinations = [8][3]int{
 }
 
 func main() {
+	PORT := os.Getenv("PORT")
 	server := http.NewServeMux()
 
 	server.HandleFunc("/ws", UpgradeConnection)
 
 	log.Println("Server started on :8081")
-	http.ListenAndServe(":8081", server)
+	http.ListenAndServe(":"+PORT, server)
 
 }
 
@@ -77,8 +79,6 @@ func UpgradeConnection(w http.ResponseWriter, r *http.Request) {
 		}
 		if roomSecrets[id].Player1 == NewPlay.Player {
 			log.Println("Player 1 play", NewPlay)
-			
-			
 
 			roomSecrets[id].Player2Conn.WriteJSON(NewPlay)
 		} else {
