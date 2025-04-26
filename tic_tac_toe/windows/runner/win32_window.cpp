@@ -1,3 +1,4 @@
+git remote add origin git@github.com:Achiket123/chick-chack-chock.git
 #include "win32_window.h"
 
 #include <dwmapi.h>
