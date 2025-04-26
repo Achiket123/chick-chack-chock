@@ -23,7 +23,9 @@ class ServerConnRemoteDataSourceImpl implements ServerConnRemoteDataSource {
   ) async {
     try {
       final conn = await BrowserWebSocket.connect(
-        Uri.parse("ws://192.168.1.3:8081/ws?id=$serverId&name=$player1"),
+        Uri.parse(
+          "ws://chick-chack-chock-backend.onrender.com/ws?id=$serverId&name=$player1",
+        ),
       );
 
       return right(conn);
@@ -41,7 +43,9 @@ class ServerConnRemoteDataSourceImpl implements ServerConnRemoteDataSource {
   ) async {
     try {
       final conn = await BrowserWebSocket.connect(
-        Uri.parse("ws://192.168.1.3:8081/ws?id=$serverId&name=$player2"),
+        Uri.parse(
+          "ws://chick-chack-chock-backend.onrender.com/ws?id=$serverId&name=$player2",
+        ),
       );
 
       return right(conn);
