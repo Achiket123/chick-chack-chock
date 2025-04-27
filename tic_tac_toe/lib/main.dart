@@ -8,6 +8,7 @@ import 'package:tic_tac_toe/features/game/domain/usecases/join_server_usecase.da
 import 'package:tic_tac_toe/features/game/presentation/blocs/play_bloc/play_bloc.dart';
 import 'package:tic_tac_toe/features/game/presentation/blocs/server_bloc/server_bloc.dart';
 import 'package:tic_tac_toe/features/game/presentation/pages/game_page.dart';
+import 'package:toastification/toastification.dart';
 
 main() {
   runApp(const MyApp());
@@ -38,11 +39,13 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider(create: (context) => PlayBloc()),
       ],
-      child: MaterialApp(
-        title: 'Chick Chack Chock',
-        theme: AppColors.themeData,
-        debugShowCheckedModeBanner: false,
-        home: const GamePage(),
+      child: ToastificationWrapper(
+        child: MaterialApp(
+          title: 'Chick Chack Chock',
+          theme: AppColors.themeData,
+          debugShowCheckedModeBanner: false,
+          home: const GamePage(),
+        ),
       ),
     );
   }

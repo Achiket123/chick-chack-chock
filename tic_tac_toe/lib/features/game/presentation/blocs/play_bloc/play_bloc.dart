@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:tic_tac_toe/features/game/domain/entities/chat_message_entity.dart';
 import 'package:tic_tac_toe/features/game/domain/entities/play_entity.dart';
 import 'package:web_socket/browser_web_socket.dart';
 import 'package:web_socket/web_socket.dart';
@@ -26,8 +27,25 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
         switch (event) {
           case TextDataReceived(text: final text):
             debugPrint('Received Text: $text');
-            final play = PlayEntity.fromMap(jsonDecode(text));
-            add(PlayEventReceivedFromServer(play));
+            final data = jsonDecode(text);
+            if (data['event'] == 'player_connected') {
+              add(PlayerJoined(playerName: data['player_connected']['player']));
+            } else if (data['event'] == 'play') {
+              add(
+                PlayEventReceivedFromServer(PlayEntity.fromMap(data['play'])),
+              );
+            } else if (data['event'] == "message") {
+              debugPrint("Message: ${data['message']}");
+              add(
+                MessageReceivedEvent(
+                  message: ChatMessageEntity(
+                    sender: data['message']['sender'],
+                    message: data['message']['message'],
+                    isMe: false,
+                  ),
+                ),
+              );
+            }
           case BinaryDataReceived(data: final data):
             debugPrint('Received Binary: $data');
           case CloseReceived(code: final code, reason: final reason):
@@ -56,6 +74,19 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
           board: event.playEntity.board,
         ),
       );
+    });
+    on<PlayerJoined>((event, emit) {
+      emit(PlayerJoinedState(playerName: event.playerName));
+    });
+    on<MessageReceivedEvent>((event, emit) {
+      emit(MessageReceivedState(message: event.message));
+    });
+    on<SendMessageEvent>((event, emit) {
+      if (_socket != null) {
+        _socket?.sendText(jsonEncode(event.message.toMap()));
+      }
+      debugPrint("Message: ${event.message}");
+      emit(MessageReceivedState(message: event.message));
     });
   }
 }

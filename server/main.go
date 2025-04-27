@@ -28,6 +28,7 @@ var WinningCombinations = [8][3]int{
 }
 
 func main() {
+	os.Setenv("PORT", "8081")
 	PORT := os.Getenv("PORT")
 	server := http.NewServeMux()
 
@@ -56,16 +57,18 @@ func UpgradeConnection(w http.ResponseWriter, r *http.Request) {
 	} else {
 		roomSecrets[id].Player2 = name
 		roomSecrets[id].Player2Conn = conn
+		roomSecrets[id].Player1Conn.WriteJSON(model.Event{PlayerConnected: model.PlayerConnected{Player: name, RoomId: id, Event: "player_connected"}, Event: "player_connected"})
+		roomSecrets[id].Player2Conn.WriteJSON(model.Event{PlayerConnected: model.PlayerConnected{Player: roomSecrets[id].Player1, RoomId: id, Event: "player_connected"}, Event: "player_connected"})
 	}
 
 	defer conn.Close()
 	log.Println("Client connected ", name, id)
 	for {
-		NewPlay := &model.Play{}
+		NewPlay := &model.Event{}
 		err := conn.ReadJSON(NewPlay)
+
 		if err != nil {
 			log.Println("Error while reading message:", err.Error())
-
 			roomSecrets[id].Player1Conn.Close()
 			roomSecrets[id].Player2Conn.Close()
 			delete(roomSecrets, id)
@@ -77,9 +80,8 @@ func UpgradeConnection(w http.ResponseWriter, r *http.Request) {
 			log.Println("Room not found")
 			break
 		}
-		if roomSecrets[id].Player1 == NewPlay.Player {
+		if roomSecrets[id].Player1Conn == conn {
 			log.Println("Player 1 play", NewPlay)
-
 			roomSecrets[id].Player2Conn.WriteJSON(NewPlay)
 		} else {
 			log.Println("Player 2 play", NewPlay)

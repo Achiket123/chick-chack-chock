@@ -25,9 +25,12 @@ class PlayEntity extends Equatable {
   }
   Map<String, dynamic> toMap() {
     return {
-      'player': player,
-      'room_id': serverId,
-      'play': List<int>.from(board.map((x) => x)),
+      'event': 'play',
+      'play': {
+        'player': player,
+        'room_id': serverId,
+        'play': List<int>.from(board.map((x) => x)),
+      },
     };
   }
 

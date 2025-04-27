@@ -26,3 +26,19 @@ class PlayFromPlayer extends PlayEvent {
 
   PlayFromPlayer({required this.playEntity});
 }
+
+class PlayerJoined extends PlayEvent {
+  final String playerName;
+
+  PlayerJoined({required this.playerName});
+}
+
+class MessageReceivedEvent extends PlayEvent {
+  final ChatMessageEntity message;
+  MessageReceivedEvent({required this.message});
+}
+
+class SendMessageEvent extends PlayEvent {
+  final ChatMessageEntity message;
+  SendMessageEvent({required this.message});
+}

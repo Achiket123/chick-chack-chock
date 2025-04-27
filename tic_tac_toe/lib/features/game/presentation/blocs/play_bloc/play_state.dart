@@ -16,3 +16,15 @@ final class PlayFromServer extends PlayState {
     required this.board,
   });
 }
+
+class PlayerJoinedState extends PlayState {
+  final String playerName;
+
+  PlayerJoinedState({required this.playerName});
+}
+
+class MessageReceivedState extends PlayState {
+  final ChatMessageEntity message;
+
+  MessageReceivedState({required this.message});
+}
